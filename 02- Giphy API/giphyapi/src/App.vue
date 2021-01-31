@@ -19,12 +19,8 @@ export default {
     };
   },
   methods: {
-    handleSearch(query) {
-      this.gifs = [];
-      this.isLoading = true;
-      fetch(
-        `https://api.giphy.com/v1/gifs/search?api_key=Koc5Zh8obOmjL4Oj88g2kV8da46wI3P6&q=${query}&limit=25&offset=0&rating=g&lang=en`
-      )
+    doQuery(url) {
+      fetch(url)
         .then((res) => {
           return res.json();
         })
@@ -33,18 +29,17 @@ export default {
           this.isLoading = false;
         });
     },
+    handleSearch(query) {
+      this.gifs = [];
+      this.isLoading = true;
+      const url = `https://api.giphy.com/v1/gifs/search?api_key=Koc5Zh8obOmjL4Oj88g2kV8da46wI3P6&q=${query}&limit=25&offset=0&rating=g&lang=en`;
+      this.doQuery(url);
+    },
   },
   created() {
-    fetch(
-      "https://api.giphy.com/v1/gifs/trending?api_key=Koc5Zh8obOmjL4Oj88g2kV8da46wI3P6&limit=25&rating=g"
-    )
-      .then((res) => {
-        return res.json();
-      })
-      .then((res) => {
-        this.gifs = res.data;
-        this.isLoading = false;
-      });
+    const url =
+      "https://api.giphy.com/v1/gifs/trending?api_key=Koc5Zh8obOmjL4Oj88g2kV8da46wI3P6&limit=25&rating=g";
+    this.doQuery(url);
   },
 };
 </script>
