@@ -1,18 +1,38 @@
 <template>
   <div id="app">
-    <search></search>
-    <preview v-bind:gifs="gifs"></preview> 
+    <search v-on:searchRequested="handleSearch"></search>
+    <p v-if="isLoading">Loading</p>
+    <preview v-bind:gifs="gifs"></preview>
   </div>
 </template>
 
 <script>
-import Preview from "./components/preview.vue";
+import preview from "./components/preview.vue";
 import search from "./components/search.vue";
 export default {
   name: "app",
-  components: { search, Preview },
+  components: { search, preview },
   data() {
-    gifs: [];
+    return {
+      gifs: [],
+      isLoading: true,
+    };
+  },
+  methods: {
+    handleSearch(query) {
+      this.gifs = [];
+      this.isLoading = true;
+      fetch(
+        `https://api.giphy.com/v1/gifs/search?api_key=Koc5Zh8obOmjL4Oj88g2kV8da46wI3P6&q=${query}&limit=25&offset=0&rating=g&lang=en`
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          this.gifs = res.data;
+          this.isLoading = false;
+        });
+    },
   },
   created() {
     fetch(
@@ -23,7 +43,7 @@ export default {
       })
       .then((res) => {
         this.gifs = res.data;
-        console.log(res.data);
+        this.isLoading = false;
       });
   },
 };
@@ -36,3 +56,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 }
 </style>
+
+
